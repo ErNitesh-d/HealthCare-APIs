@@ -1,6 +1,5 @@
 package com.example.healthcare.service.impl;
 
-import com.example.healthcare.exception.UserAlreadyExists;
 import com.example.healthcare.model.ApiResponse;
 import com.example.healthcare.model.Patient;
 import com.example.healthcare.repository.impl.PatientRepositoryImpl;
@@ -10,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -69,10 +71,66 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Try<ApiResponse<Patient>> updatePatient(Patient patient) {
+    public Try<ApiResponse<Patient>> updatePatient(int patient_id,Patient patient) {
 
-        return new Try.Success<>(new ApiResponse<>());
+        ApiResponse<Patient> apiResponse =new ApiResponse<Patient>();
+
+
+        boolean existsByPhone=patientRepository.existsByPhone(patient.getPhone());
+        boolean existsByEmail=patientRepository.existsByEmail(patient.getEmail());
+
+        if (existsByEmail || existsByPhone) {
+            apiResponse.setError("User/Patient already exists with same Email or Phone");
+            apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return new Try.Success<>(apiResponse);
+        }
+
+        int row= patientRepository.updatePatient(
+                patient_id,
+                patient.getDateOfBirth(),
+                patient.getEmail(),
+                patient.getGender().name(),
+                patient.getName(),
+                patient.getUpdatedAt(),
+                patient.getPhone()
+        );
+
+        if(row==0){
+            apiResponse.setError("Update failed");
+            apiResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new Try.Success<>(apiResponse);
+        }
+        apiResponse.setError("Patient Updated Successfully");
+        apiResponse.setResponse(patient);
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        return new Try.Success<>(apiResponse);
+
     }
+    @Override
+    public ApiResponse<Void> deletePatient(int patient_id) {
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
+
+        Optional<Patient> isFound = patientRepository.findById((long) patient_id);
+
+        if (isFound.isEmpty()) {
+            apiResponse.setError("Patient not found or already deleted");
+            apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
+            return apiResponse;
+        }
+
+        patientRepository.deleteById((long) patient_id);
+
+        apiResponse.setError("Patient deleted successfully with ID: " + patient_id);
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        return apiResponse;
+    }
+
+    @Override
+    public List<Patient> findAllPatients() {
+        return patientRepository.findAll();
+    }
+
+
 }
 
 

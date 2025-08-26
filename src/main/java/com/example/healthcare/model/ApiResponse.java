@@ -24,5 +24,4 @@ public class ApiResponse<T> {
 
     private int statusCode;
 
-
 }
