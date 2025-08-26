@@ -23,7 +23,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     /**
-     * Check Email and phone is unique or not if not unique return APIResponse with error
+     * Check Email and phone is unique if not unique return APIResponse with error
      * @param patient
      * @return APIResponse with Response OBJECT, statusCode and, Message if inserted
      */
