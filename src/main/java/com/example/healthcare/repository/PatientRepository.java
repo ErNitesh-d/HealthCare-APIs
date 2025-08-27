@@ -48,4 +48,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query(value = "Select * from patient",nativeQuery = true)
     List<Patient> findAllPatients();
 
+
 }

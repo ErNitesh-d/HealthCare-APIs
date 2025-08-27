@@ -34,7 +34,6 @@ public class Doctor {
     private Specialization specializationId;
 
     @Email(message = "Invalid Email Format")
-
     @Column(unique = true, nullable = false)
     private String email;
 
