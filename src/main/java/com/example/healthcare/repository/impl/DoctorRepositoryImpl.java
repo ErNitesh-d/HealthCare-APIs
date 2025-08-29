@@ -16,6 +16,7 @@ public interface DoctorRepositoryImpl extends DoctorRepository {
 
     @Override
     boolean existsByEmail(String email);
+
     @Override
     boolean existsByPhone(String phone);
 
@@ -29,7 +30,7 @@ public interface DoctorRepositoryImpl extends DoctorRepository {
     int insertDoctor( @Param("doctor_name") String doctor_name,
                       @Param("specialization_id") int specialization_id,
                       @Param("email") String email,
-                      @Param("name") String name
+                      @Param("phone") String phone
 
     );
 

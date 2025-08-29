@@ -2,7 +2,7 @@ package com.example.healthcare.controller;
 
 import com.example.healthcare.model.ApiResponse;
 import com.example.healthcare.model.Doctor;
-import com.example.healthcare.service.impl.DoctorServiceImpl;
+import com.example.healthcare.service.DoctorService;
 import com.lambdista.util.Try;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,12 @@ import java.util.List;
 
 public class DoctorController {
 
-    private final DoctorServiceImpl doctorService;
+    private final DoctorService doctorService;
 
     @Autowired
-    public DoctorController(DoctorServiceImpl doctorService) {
+    public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
-
 
     @PostMapping("/addDoctor")
     public ResponseEntity<ApiResponse<Doctor>> addPatient(@Valid @RequestBody Doctor doctor) {
@@ -51,7 +50,7 @@ public class DoctorController {
 
         ApiResponse<List<Doctor>> response = new ApiResponse<>();
         response.setResponse(doctors);
-        response.setError(null);
+        response.setMessage(null);
         response.setStatusCode(HttpStatus.OK.value());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

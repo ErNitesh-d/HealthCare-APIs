@@ -62,7 +62,7 @@ public class PatientController {
 
         ApiResponse<List<Patient>> response = new ApiResponse<>();
         response.setResponse(patients);
-        response.setError(null);
+        response.setMessage(null);
         response.setStatusCode(HttpStatus.OK.value());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

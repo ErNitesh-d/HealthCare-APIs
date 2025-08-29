@@ -2,7 +2,7 @@ package com.example.healthcare.model;
 
 import com.example.healthcare.utils.Days;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,25 +19,26 @@ import java.time.LocalTime;
 @AllArgsConstructor
 
 public class DoctorAvailability {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int DoctorAvailabilityId;
+    private int doctorAvailabilityId;
 
-    @NotBlank(message = "Doctor Is Required")
+    @NotNull(message = "Doctor is required")
     @ManyToOne
-    @JoinColumn(name = "doctorId")
+    @JoinColumn(name = "doctorId", nullable = false)
     private Doctor doctorId;
 
-    @NotBlank(message = "Days Of Availability Required")
+    @NotNull(message = "Days of availability required")
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Days availableDays;
 
+    @NotNull(message = "Start time is required")
     @Column(nullable = false)
     private LocalTime startTime;
 
+    @NotNull(message = "End time is required")
     @Column(nullable = false)
     private LocalTime endTime;
-
 
 }

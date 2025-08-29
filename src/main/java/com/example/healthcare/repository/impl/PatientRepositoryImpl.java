@@ -29,8 +29,10 @@ public interface PatientRepositoryImpl extends PatientRepository   {
                             @Param("updated_at")  LocalDate updated_at, @Param("phone") String phone
     );
 
+    @Override
     boolean existsByEmail(String email);
 
+    @Override
     boolean existsByPhone(String phone);
 
 

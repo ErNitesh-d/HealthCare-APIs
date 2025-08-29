@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * Base/Common/Standard Response For All API request
  * @param <T> The Type of Response Data
@@ -20,7 +18,7 @@ public class ApiResponse<T> {
 
     private T response;
 
-    private String error;
+    private String message;
 
     private int statusCode;
 

@@ -23,4 +23,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DoctorNotFound.class)
+    public ResponseEntity<ApiResponse<Object>> handleNotFound(DoctorNotFound ex) {
+
+        String errorMessage=Objects.requireNonNull(ex.getMessage());
+
+        ApiResponse<Object> response = new ApiResponse<>(null, errorMessage, HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+
 }

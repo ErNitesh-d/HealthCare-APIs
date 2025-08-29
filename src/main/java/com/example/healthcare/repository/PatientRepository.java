@@ -12,6 +12,11 @@ import java.util.List;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
+
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO Patient (patient_id, date_of_birth, created_at, " +

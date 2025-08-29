@@ -26,7 +26,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     int insertDoctor( @Param("doctor_name") String doctor_name,
                       @Param("specialization_id") int specialization_id,
                        @Param("email") String email,
-                      @Param("name") String name
+                      @Param("phone") String phone
 
     );
 
