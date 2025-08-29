@@ -1,5 +1,6 @@
 package com.example.healthcare.service.impl;
 
+import ch.qos.logback.core.pattern.parser.OptionTokenizer;
 import com.example.healthcare.exception.DoctorNotFound;
 import com.example.healthcare.model.ApiResponse;
 import com.example.healthcare.model.AvailabilityTimeSlots;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService {
@@ -61,17 +63,18 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public Try<ApiResponse<DoctorAvailability>> update(int doctorAvailabilityId,DoctorAvailability availability) {
+    public Try<ApiResponse<DoctorAvailability>> update(int doctorAvailabilityId, DoctorAvailability availability) {
 
+        ApiResponse<DoctorAvailability> apiResponse = new ApiResponse<>();
 
-        ApiResponse<DoctorAvailability> apiResponse=new ApiResponse<>();
-
-        boolean doctor=doctorRepository.existsById(availability.getDoctorId().getDoctorId());
-        if(!doctor){
-            throw  new DoctorNotFound("Selected Doctor Not Found");
+        // 1. Check doctor exists
+        boolean doctorExists = doctorRepository.existsById(availability.getDoctorId().getDoctorId());
+        if (!doctorExists) {
+            throw new DoctorNotFound("Selected Doctor Not Found");
         }
 
-        int updated=doctorAvailabilityRepository.updateDoctorAvailability(
+        // 2. Update availability in DB
+        int updated = doctorAvailabilityRepository.updateDoctorAvailability(
                 doctorAvailabilityId,
                 availability.getAvailableDays().name(),
                 availability.getStartTime(),
@@ -79,18 +82,32 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
                 availability.getDoctorId().getDoctorId()
         );
 
-        if(updated==0) {
+        if (updated == 0) {
             apiResponse.setMessage("Not Updated");
             apiResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             apiResponse.setResponse(null);
             return new Try.Failure<>(new RuntimeException("Not Updated"));
-
         }
+
+        // 3. Fetch the persisted availability (with ID)
+        DoctorAvailability persistedAvailability = doctorAvailabilityRepository.findById(doctorAvailabilityId)
+                .orElseThrow(() -> new RuntimeException("DoctorAvailability not found after update"));
+
+        // 4. Delete old slots
+        availabilityTimeSlotsRepository.deleteByDoctorAvailabilityId(doctorAvailabilityId);
+
+        // 5. Generate new slots using the **persisted entity**
+        List<AvailabilityTimeSlots> slots = availabilityTimeSlotsService.generateTimeSlots(persistedAvailability);
+
+        // 6. Save new slots
+        availabilityTimeSlotsRepository.saveAll(slots);
+
+        // 7. Prepare response
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setResponse(availability);
-        apiResponse.setMessage("Availability Updated Successfully");
+        apiResponse.setResponse(persistedAvailability);
+        apiResponse.setMessage("Availability and Time Slots Updated Successfully");
 
         return new Try.Success<>(apiResponse);
-
     }
+
 }

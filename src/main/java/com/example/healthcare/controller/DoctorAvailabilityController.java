@@ -1,7 +1,9 @@
 package com.example.healthcare.controller;
 
+import com.example.healthcare.model.ApiResponse;
 import com.example.healthcare.model.DoctorAvailability;
 import com.example.healthcare.service.DoctorAvailabilityService;
+import com.lambdista.util.Try;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,18 +22,18 @@ public class DoctorAvailabilityController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<DoctorAvailability> addDoctorAvailability(@Valid @RequestBody DoctorAvailability availability) {
+    public ResponseEntity<ApiResponse<DoctorAvailability>> addDoctorAvailability(@Valid @RequestBody DoctorAvailability availability) {
 
-        doctorAvailabilityService.add(availability);
+        Try<ApiResponse<DoctorAvailability>> result = doctorAvailabilityService.add(availability);
 
-        return new ResponseEntity<>(availability, HttpStatus.OK);
+        return new ResponseEntity<>(result.get(), HttpStatus.OK);
 
     }
 
     @PutMapping("/update/{doctorAvailabilityId}")
-    public ResponseEntity<DoctorAvailability> updateDoctorAvailability(@PathVariable int doctorAvailabilityId,@Valid @RequestBody DoctorAvailability availability) {
-        doctorAvailabilityService.update(doctorAvailabilityId,availability);
-        return new ResponseEntity<>(availability, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<DoctorAvailability>> updateDoctorAvailability(@PathVariable int doctorAvailabilityId,@Valid @RequestBody DoctorAvailability availability) {
+        Try<ApiResponse<DoctorAvailability>> result= doctorAvailabilityService.update(doctorAvailabilityId,availability);
+        return new ResponseEntity<>(result.get(), HttpStatus.OK);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.example.healthcare.service.impl;
 
 import com.example.healthcare.model.ApiResponse;
-import com.example.healthcare.model.AvailabilityTimeSlots;
 import com.example.healthcare.model.Doctor;
+import com.example.healthcare.model.DoctorAvailability;
 import com.example.healthcare.repository.AvailabilityTimeSlotsRepository;
 import com.example.healthcare.repository.DoctorAvailabilityRepository;
 import com.example.healthcare.repository.DoctorRepository;
@@ -107,6 +107,18 @@ public class DoctorServiceImpl implements DoctorService {
             apiResponse.setMessage("Doctor not found or already deleted");
             apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
             return apiResponse;
+        }
+        Doctor doctor = isFound.get();
+
+        // 1. doctorAvailability fetch
+        List<DoctorAvailability> availabilities = doctorAvailabilityRepository.findByDoctorId(doctor);
+
+        for (DoctorAvailability availability : availabilities) {
+            // 2. slots delete
+            availabilityTimeSlotsRepository.deleteByDoctorAvailabilityId(availability.getDoctorAvailabilityId());
+
+            // 3. availability delete
+            doctorAvailabilityRepository.delete(availability);
         }
 
         doctorRepository.deleteById(doctor_id);

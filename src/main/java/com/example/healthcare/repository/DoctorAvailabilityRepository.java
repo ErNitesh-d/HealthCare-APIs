@@ -3,17 +3,18 @@ package com.example.healthcare.repository;
 import com.example.healthcare.controller.DoctorAvailabilityController;
 import com.example.healthcare.model.Doctor;
 import com.example.healthcare.model.DoctorAvailability;
-import com.example.healthcare.utils.Days;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
+import java.util.List;
 import java.time.LocalTime;
 
-public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvailability, Long> {
+public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvailability, Integer> {
+
+    // fetch all availabilities of a doctor by doctor_id
+    List<DoctorAvailability> findByDoctorId(Doctor doctorId);
 
     @Transactional
     @Modifying
