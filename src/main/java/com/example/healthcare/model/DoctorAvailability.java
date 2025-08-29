@@ -25,7 +25,7 @@ public class DoctorAvailability {
 
     @NotNull(message = "Doctor is required")
     @ManyToOne
-    @JoinColumn(name = "doctorId", nullable = false)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctorId;
 
     @NotNull(message = "Days of availability required")

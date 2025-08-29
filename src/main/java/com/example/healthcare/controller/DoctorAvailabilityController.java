@@ -21,6 +21,12 @@ public class DoctorAvailabilityController {
         this.doctorAvailabilityService = doctorAvailabilityService;
     }
 
+    /**
+     * Adds a new doctor availability record.
+     *
+     * @param availability the availability details of the doctor
+     * @return ResponseEntity containing ApiResponse with the created DoctorAvailability
+     */
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<DoctorAvailability>> addDoctorAvailability(@Valid @RequestBody DoctorAvailability availability) {
 
@@ -30,6 +36,13 @@ public class DoctorAvailabilityController {
 
     }
 
+    /**
+     * Updates an existing doctor availability by its ID.
+     *
+     * @param doctorAvailabilityId the ID of the doctor availability to update
+     * @param availability         the updated availability details
+     * @return ResponseEntity containing ApiResponse with the updated DoctorAvailability
+     */
     @PutMapping("/update/{doctorAvailabilityId}")
     public ResponseEntity<ApiResponse<DoctorAvailability>> updateDoctorAvailability(@PathVariable int doctorAvailabilityId,@Valid @RequestBody DoctorAvailability availability) {
         Try<ApiResponse<DoctorAvailability>> result= doctorAvailabilityService.update(doctorAvailabilityId,availability);

@@ -1,6 +1,7 @@
 package com.example.healthcare.service.impl;
 
 import ch.qos.logback.core.pattern.parser.OptionTokenizer;
+import com.example.healthcare.exception.DoctorAvailabilityNotFound;
 import com.example.healthcare.exception.DoctorNotFound;
 import com.example.healthcare.model.ApiResponse;
 import com.example.healthcare.model.AvailabilityTimeSlots;
@@ -23,7 +24,6 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     private final DoctorAvailabilityRepository doctorAvailabilityRepository;
     private final AvailabilityTimeSlotsRepository availabilityTimeSlotsRepository;
-
     private final AvailabilityTimeSlotsService availabilityTimeSlotsService;
     private final DoctorRepository doctorRepository;
 
@@ -91,7 +91,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
         // 3. Fetch the persisted availability (with ID)
         DoctorAvailability persistedAvailability = doctorAvailabilityRepository.findById(doctorAvailabilityId)
-                .orElseThrow(() -> new RuntimeException("DoctorAvailability not found after update"));
+                .orElseThrow(() -> new DoctorAvailabilityNotFound("DoctorAvailability not found after update"));
 
         // 4. Delete old slots
         availabilityTimeSlotsRepository.deleteByDoctorAvailabilityId(doctorAvailabilityId);

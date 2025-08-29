@@ -28,4 +28,6 @@ public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvaila
                                  @Param("start_time") LocalTime start_time,
                                  @Param("end_time") LocalTime end_time,
                                  @Param("doctor_id") int doctor_id);
+
+
 }
